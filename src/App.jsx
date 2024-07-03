@@ -1,31 +1,37 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
-import { useDeck } from './services/useDeck'
+import Deck from './services/Deck'
+import Hand from './services/Hand'
 
 function App() {
 
-	const [deck, drawCards] = useDeck(1);
+	const [deck, _setDeck] = useState(new Deck)
+	const [hand, setHand] = useState(new Hand)
 
-	const [hand, setHand] = useState(['card1', 'card2'])
 
 	function handleClick_deal() {
-		setHand(drawCards(2))
+		setHand(new Hand(deck.draw(2)))
 	}
 
 	return (
 		<>
 			<button onClick={handleClick_deal}>Deal</button>
-			{
-				hand.map((card, index) => {
-					return (
-						<>
-							<div>{card} </div>
-						</>
-					)
-				})
-			}
+
+			{/* HAND */}
+			<div className='players_hand'>
+				<div className='hand_score'>
+					Score: {hand.score[0]} {hand.score[0] !== hand.score[1] && ` / ${hand.score[1]}`}
+				</div>
+
+				{/* CARDS */}
+				{
+					hand.cards.map((card, index) => {
+						return (
+							<div key={index}>{card} </div>
+						)
+					})
+				}
+			</div>
 		</>
 	)
 }

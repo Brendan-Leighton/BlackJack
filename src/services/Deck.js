@@ -1,17 +1,15 @@
 import React, { useEffect, useState } from "react";
 
-export const useDeck = (numberOfDecks) => {
-	const [deck, setDeck] = useState(createDeck(2))
-	const [removedCards, setRemovedCards] = useState(createDeck(2))
+export default class Deck {
 
-	useEffect(() => {
-		setDeck(shuffleDeck(createDeck(numberOfDecks)))
-	}, [numberOfDecks])
+	constructor(numberOfDecks = 1) {
+		this.deck = this.#shuffleDeck(this.#createDeck(numberOfDecks))
+	}
 
-	function createDeck(numberOfDecks = 1) {
-		let suits = ['H', 'C', 'D', 'S'];
-		let ranks = ['2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K', 'A'];
-		let newDeck = [];
+	#createDeck(numberOfDecks) {
+		const suits = ['H', 'C', 'D', 'S'];
+		const ranks = ['2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K', 'A'];
+		const newDeck = [];
 
 		// Looping 'suits'
 		for (let suitCount = 0; suitCount < 4; suitCount++) {
@@ -27,7 +25,7 @@ export const useDeck = (numberOfDecks) => {
 		return newDeck;
 	}
 
-	function shuffleDeck(deck) {
+	#shuffleDeck(deck) {
 		console.log('shuffleDeck()');
 		for (let i = 0; i < deck.length; i++) {
 			let tempCard = deck[i];
@@ -39,19 +37,15 @@ export const useDeck = (numberOfDecks) => {
 		return deck
 	}
 
-	function drawCards(amountToDraw) {
-		if (deck.length < amountToDraw) console.error('empty deck, cant draw another card')
-		const tempDeck = deck
+	draw(amountToDraw) {
+		if (this.deck.length < amountToDraw) console.error('empty deck, cant draw another card')
 		const cards = []
 
 		for (let i = 0; i < amountToDraw; i++) {
-			cards.push(tempDeck.pop())
+			cards.push(this.deck.pop())
 		}
 
-		setDeck([...tempDeck])
 		return cards
 	}
-
-	return [deck, drawCards];
 
 }
