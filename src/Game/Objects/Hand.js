@@ -1,6 +1,4 @@
-import React from 'react'
-
-export default class Hand {
+export class Hand {
 	constructor(cards = []) {
 		this.cards = cards
 		this.score = this.getHandScore(cards)

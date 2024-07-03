@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from "react";
-import Card from './Card'
+import { Card } from './Card'
 
-export default class Deck {
+export class Deck {
 
 	constructor(numberOfDecks = 1) {
 		this.deck = this.#shuffleDeck(this.#createDeck(numberOfDecks))
