@@ -10,18 +10,18 @@ export class Hand {
 	}
 
 	getHandScore(hand) {
-		console.log(`\ngetHandScore:\n\tHand: `, hand);
+		// console.log(`\ngetHandScore:\n\tHand: `, hand);
 		let score = [0, 0]
 		if (hand.length) {
 			hand.forEach(card => {
-				console.log(`\tCard:`, card);
+				// console.log(`\tCard:`, card);
 				score[0] += card.score[0]
 				score[1] += card.score[1]
 			})
 		}
-		else console.log('\t... hand is empty');
+		// else console.log('\t... hand is empty');
 
-		console.log(`\tScore: ${score}`);
+		// console.log(`\tScore: ${score}`);
 		return score
 	}
 }
