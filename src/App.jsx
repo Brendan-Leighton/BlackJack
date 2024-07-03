@@ -6,12 +6,17 @@ import { useDeck } from './services/useDeck'
 
 function App() {
 
-	const deck = useDeck(1);
+	const [deck, drawCards] = useDeck(1);
 
 	const [hand, setHand] = useState(['card1', 'card2'])
 
+	function handleClick_deal() {
+		setHand(drawCards(2))
+	}
+
 	return (
 		<>
+			<button onClick={handleClick_deal}>Deal</button>
 			{
 				hand.map((card, index) => {
 					return (

@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 export const useDeck = (numberOfDecks) => {
 	const [deck, setDeck] = useState(createDeck(2))
 	const [removedCards, setRemovedCards] = useState(createDeck(2))
-	const [cardsRemaining, setCardsRemaining] = useState(numberOfDecks * 52)
 
 	useEffect(() => {
 		setDeck(shuffleDeck(createDeck(numberOfDecks)))
@@ -40,6 +39,19 @@ export const useDeck = (numberOfDecks) => {
 		return deck
 	}
 
-	return deck;
+	function drawCards(amountToDraw) {
+		if (deck.length < amountToDraw) console.error('empty deck, cant draw another card')
+		const tempDeck = deck
+		const cards = []
+
+		for (let i = 0; i < amountToDraw; i++) {
+			cards.push(tempDeck.pop())
+		}
+
+		setDeck([...tempDeck])
+		return cards
+	}
+
+	return [deck, drawCards];
 
 }
