@@ -37,8 +37,14 @@ export class Deck {
 		return deck
 	}
 
+	/**
+	 * 
+	 * @param {number} amountToDraw - Amount of cards to draw
+	 * @returns @type {Card} - Some number of Card objects
+	 */
 	draw(amountToDraw) {
 		if (this.deck.length < amountToDraw) console.error('empty deck, cant draw another card')
+		/** @type {Card[]} */
 		const cards = []
 
 		for (let i = 0; i < amountToDraw; i++) {
