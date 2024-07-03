@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import Card from './Card'
 
 export default class Deck {
 
@@ -17,7 +18,7 @@ export default class Deck {
 			for (let rankCount = 0; rankCount < 13; rankCount++) {
 				// Looping 'numberOfDecks'
 				for (let amount = 0; amount < numberOfDecks; amount++) {
-					newDeck.push(`${ranks[rankCount]} - ${suits[suitCount]}`);
+					newDeck.push(new Card(suits[suitCount], ranks[rankCount]))
 				}
 			}
 		}

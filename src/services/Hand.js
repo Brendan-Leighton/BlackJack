@@ -1,21 +1,5 @@
 import React from 'react'
 
-const cardValues = {
-	'2': 2,
-	'3': 3,
-	'4': 4,
-	'5': 5,
-	'6': 6,
-	'7': 7,
-	'8': 8,
-	'9': 9,
-	'T': 10,
-	'J': 10,
-	'Q': 10,
-	'K': 10,
-	'A': 1
-}
-
 export default class Hand {
 	constructor(cards = []) {
 		this.cards = cards
@@ -28,26 +12,16 @@ export default class Hand {
 	}
 
 	getHandScore(hand) {
-		console.log(`\ngetHandScore:\n\tHand: ${hand}`);
-		if (hand.length < 1) {
-			console.log('\t... hand is empty');
-			return 0
-		}
+		console.log(`\ngetHandScore:\n\tHand: `, hand);
 		let score = [0, 0]
-
-		hand.forEach(card => {
-			console.log(`\tCard: ${card}`);
-
-			const cardAmount = cardValues[card.charAt(0)]
-			console.log(`\tcardAmount: ${cardAmount}`);
-			score[0] += cardAmount
-			score[1] += cardAmount
-
-			if (cardAmount === 1) {
-				score[1] += 10
-			}
-
-		})
+		if (hand.length) {
+			hand.forEach(card => {
+				console.log(`\tCard:`, card);
+				score[0] += card.score[0]
+				score[1] += card.score[1]
+			})
+		}
+		else console.log('\t... hand is empty');
 
 		console.log(`\tScore: ${score}`);
 		return score

@@ -27,7 +27,7 @@ function App() {
 				{
 					hand.cards.map((card, index) => {
 						return (
-							<div key={index}>{card} </div>
+							<span key={index}> {card.rank}{card.suit} </span>
 						)
 					})
 				}
