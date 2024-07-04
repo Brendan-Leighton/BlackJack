@@ -5,3 +5,8 @@
 .color_green {
 	color: green;
 }
+
+ul.hand {
+	display: flex;
+	list-style: none;
+}

@@ -164,13 +164,26 @@ export default function Game() {
 				</div>
 				{/* DEALERS CARDS */}
 				{
-					isPlayersTurn ?
-						<span>{dealer.cards.length && dealer.cards[0].suit}{dealer.cards.length && dealer.cards[0].rank} ? </span>
-						: dealer.cards.map((card, index) => {
-							return (
-								<span key={index}> {card.rank}{card.suit} </span>
-							)
-						})
+					<ul className={styles.hand}>
+						{
+							isPlayersTurn ?
+								<Card
+									suit={dealer.cards[0].suit}
+									rank={dealer.cards[0].rank}
+								/>
+
+								: dealer.cards.map((card, index) => {
+									return (
+										<li key={index}>
+											<Card
+												rank={card.rank}
+												suit={card.suit}
+											/>
+										</li>
+									)
+								})
+						}
+					</ul>
 				}
 			</div>
 
@@ -199,7 +212,7 @@ export default function Game() {
 				</div>
 				{/* PLAYERS CARDS */}
 				{
-					<ul>
+					<ul className={styles.hand}>
 						{
 							hand.cards.map((card, index) => {
 								return (
