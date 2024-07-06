@@ -1,4 +1,4 @@
-import { Card } from './Card'
+import { iCard } from './iCard'
 
 export class Deck {
 
@@ -17,7 +17,7 @@ export class Deck {
 			for (let rankCount = 0; rankCount < 13; rankCount++) {
 				// Looping 'numberOfDecks'
 				for (let amount = 0; amount < numberOfDecks; amount++) {
-					newDeck.push(new Card(suits[suitCount], ranks[rankCount]))
+					newDeck.push(new iCard(suits[suitCount], ranks[rankCount]))
 				}
 			}
 		}

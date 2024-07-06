@@ -14,7 +14,8 @@ const cardValues = {
 	'K': 10
 }
 
-export class Card {
+export class iCard {
+	isHidden = false
 	constructor(suit, rank) {
 		this.suit = suit
 		this.rank = rank

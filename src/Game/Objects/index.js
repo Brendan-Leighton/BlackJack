@@ -1,3 +1,3 @@
-export * from './Card'
+export * from './iCard'
 export * from './Deck'
 export * from './Hand'

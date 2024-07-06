@@ -10,12 +10,30 @@ const suits = {
 }
 
 export function Card({ rank, suit }) {
-	const colorr = suit === 'H' || suit === 'D' ? 'red' : 'black';
+	// Unassigned rank/suit is used to hide the dealers 2nd card while it's the player's turn)
+	if (rank === undefined || suit === undefined) {
+		rank = '?'
+		suit = '?'
+	}
+
+	let colorr;
+	switch (suit) {
+		case 'H':
+		case 'D':
+			colorr = 'red'
+			break;
+		case 'C':
+		case 'S':
+			colorr = 'black'
+			break;
+		default:
+			colorr = 'blue'
+	}
 	return (
 		<div className={styles.Card} style={{ color: colorr }}>
-			<div className="suit" style={{ textAlign: "right" }}>{suits[suit]}</div>
-			<div className="rank">{rank}</div>
-			<div className="suit" style={{ textAlign: "left" }}>{suits[suit]}</div>
+			<div className={styles.suit} style={{ textAlign: "right" }}>{suits[suit]}</div>
+			<div className={styles.rank}>{rank}</div>
+			<div className={styles.suit} style={{ textAlign: "left" }}>{suits[suit]}</div>
 		</div >
 	)
 }

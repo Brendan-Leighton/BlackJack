@@ -1,80 +1,83 @@
 import React, { useEffect, useState } from 'react'
 import styles from './Game.module.css'
-import { Deck, Hand } from './Objects'
-import { Card } from './Components'
+import { Deck, iCard } from './Objects'
+import { DisplayScore, Hand } from './Components'
 
 export default function Game() {
+	// DEV ONLY
+	const tempCards = [new iCard('S', 'A'), new iCard('C', 'A')];
 
+	//
 	const [deck, setDeck] = useState()
-	const [hand, setHand] = useState(new Hand)
-	const [dealer, setDealer] = useState(new Hand)
-	const [isBust, setIsBust] = useState(false)
-	const [isBustDealer, setIsBustDealer] = useState(false)
-	const [isBlackJack, setIsBlackJack] = useState(false)
-	const [isBlackJackDealer, setIsBlackJackDealer] = useState(false)
+	const [dealersScore, setDealersScore] = useState([0, 0])
+	const [playersScore, setPlayersScore] = useState([0, 0])
+	const [dealtCards, setDealtCards] = useState([[], []])
 	const [isPlayersTurn, setIsPlayersTurn] = useState(true)
 	const [isGameOver, setIsGameOver] = useState(false)
 	const [isWinnerPlayer, setIsWinnerPlayer] = useState(false)
 	const [isGameTie, setIsGameTie] = useState(false)
 
+
 	useEffect(() => {
-		setDeck(new Deck)
+		setDeck(new Deck())
 	}, [])
 
 	/**
-		Check player's hand score when it changes
+		CHECK PLAYER'S HAND FOR TURN-ENDING SCORE
 	 */
 	useEffect(() => {
-		// BUST
-		if (hand.score[0] > 21) {
-			setIsBust(true)
+		// Check player's score for a bust, in which they instantly lose the round
+		if (playersScore[0] > 21) {
+			setIsPlayersTurn(false)
 			setIsGameOver(true)
+			setIsWinnerPlayer(false)
 		}
-		else setIsBust(false)
 
-		// BLACK JACK
-		if (hand.score[0] === 21) {
-			setIsBlackJack(true)
-			setIsGameOver(true)
-			setIsWinnerPlayer(true)
+		if (playersScore[0] === 21 || playersScore[1] === 21) {
+			setIsPlayersTurn(false)
 		}
-		else setIsBlackJack(false)
-	}, [hand])
+	}, [playersScore])
 
 	/**
 		Dealer's Turn handled here
 	 */
 	useEffect(() => {
-		if (isPlayersTurn) return
+		if (!isPlayersTurn && !isGameOver) checkDealersHand()
+	}, [isPlayersTurn, dealersScore])
+
+	function checkDealersHand() {
 
 		// BUST
-		if (dealer.score[0] > 21) {
-			console.log(`\tDealer Bust on ${dealer.score[0]}`);
-			setIsBustDealer(true)
+		if (dealersScore[0] > 21) {
+			console.log(`\tDealer Bust on ${dealersScore[0]}`);
 			setIsGameOver(true)
 			setIsWinnerPlayer(true)
 			return
 		}
 
 		// BLACK JACK
-		if (dealer.score[0] === 21 || dealer.score[1] === 21) {
-			setIsBlackJackDealer(true)
+		if (dealersScore[0] === 21 || dealersScore[1] === 21) {
 			setIsGameOver(true)
-			setIsWinnerPlayer(false)
+			if (playersScore[0] === 21 || playersScore[1] === 21) {
+				setIsGameTie(true)
+			}
+			else setIsWinnerPlayer(false)
 			console.log(`\tDealer BlackJack`);
 			return
 		}
 
-		// STAND
-		if (dealer.score[0] >= 17) {
+		// STAND - end dealers turn and determine the winner
+		if (dealersScore[0] >= 17) {
 			setIsGameOver(true)
-			console.log(`\tDealer stops at ${dealer.score[0]}`);
-			if ((hand.score[0] > dealer.score[0]) || (hand.score[1] > dealer.score[0])) {
-				const bestHand = Math.max(hand.score[0], hand.score[1])
+			console.log(`\tDealer stops at ${dealersScore[0]}`);
+			if ((playersScore[0] > dealersScore[0] && playersScore[0] <= 21) || (playersScore[1] > dealersScore[0] && playersScore[1] <= 21)) {
+				let bestHand
+				if (playersScore[1] > 21) bestHand = playersScore[0]
+				else bestHand = Math.max(playersScore[0], playersScore[1])
 				setIsWinnerPlayer(true)
 				console.log(`Player wins with ${bestHand}`);
 			}
-			else if (hand.score[0] === dealer.score[0] || hand.score[0] === dealer.score[0]) {
+			else if (playersScore[0] === dealersScore[0] || playersScore[0] === dealersScore[0]) {
 				setIsGameTie(true)
 			}
 			else {
@@ -85,30 +88,20 @@ export default function Game() {
 		}
 
 		// HIT
-		console.log(`\tDealer Hits`);
-		setDealer(new Hand([...dealer.cards, ...deck.draw(1)]))
-	}, [dealer, isPlayersTurn])
-
-	/**
-		Reset state when player's turn begins
-	 */
-	useEffect(() => {
-		if (isPlayersTurn) console.log('Players Turn');
-		else console.log('\nDealers Turn');
-
-	}, [isPlayersTurn])
+		if (dealersScore[0] < 17) {
+			console.log(`\tDealer Hits`);
+			setDealtCards([[...dealtCards[0], ...deck.draw(1)], dealtCards[1]])
+		}
+	}
 
 	/**
 	 * Deal 2 cards to player and dealer
 	 */
 	function handleClick_deal() {
-		setHand(new Hand(deck.draw(2)))
-		setDealer(new Hand(deck.draw(2)))
+
+		// setDealtCards([[...deck.draw(2)], [...deck.draw(2)]])
+		setDealtCards([[...deck.draw(2)], tempCards])
 		// RESET STATE
-		setIsBlackJack(false)
-		setIsBlackJackDealer(false)
-		setIsBust(false)
-		setIsBustDealer(false)
 		setIsGameOver(false)
 		setIsGameTie(false)
 		setIsPlayersTurn(true)
@@ -118,7 +111,9 @@ export default function Game() {
 	 * Lets the player 'Hit' - get another card for their hand
 	 */
 	function handleClick_hit() {
-		setHand(new Hand([...hand.cards, ...deck.draw(1)]))
+		console.log('handleClick_hit()')
+		dealtCards[1] = [...dealtCards[1], ...deck.draw(1)]
+		setDealtCards([...dealtCards])
 	}
 
 	/**
@@ -129,110 +124,49 @@ export default function Game() {
 	}
 
 	return (
-		<>
+		<div className={styles.Game}>
 			{/* GAME STATE MESSAGES */}
 			{isGameOver && <p>GAME OVER!</p>}
-			{isBlackJackDealer && <p>Dealer has Black Jack!</p>}
 			{isGameTie && <p>It's a Tie!</p>}
 			{isGameOver && (isWinnerPlayer ? <p>Player Wins</p> : <p>Dealer Wins</p>)}
 
 			{/* MAIN CONTROLS */}
 			<button onClick={handleClick_deal}>Deal</button>
 
-			{/* DEALERS HAND */}
-			<div className='dealers_hand'>
-				{/* DEALERS SCORE */}
-				<div className='hand_score'>
-					{
-						isPlayersTurn ? // dealer's second card is hidden therefor the score is unknown
-							<div className="score">
-								Score: ?
-							</div>
-							: isBustDealer ?
-								<div className="score_bust">
-									BUST: <span className={styles.color_red}>{dealer.score[0]}</span>
-								</div>
-								: isBlackJackDealer ?
-									<div className="score_blackjack">
-										Black Jack!: <span className={styles.color_green}>21</span>
-									</div>
-									: //
-									<div className="score">
-										Score: {dealer.score[0]} {(dealer.score[0] !== dealer.score[1] && dealer.score[1] < 22) && ` / ${dealer.score[1]}`}
-									</div>
-					}
+			<div className={styles.table}>
+				{/* DEALERS HAND */}
+				<div className='dealers_hand'>
+					<p>Dealer's Hand</p>
+					<DisplayScore
+						scoreArray={dealersScore}
+					/>
+					<Hand
+						isPlayer={false}
+						isTurn={!isPlayersTurn}
+						cards={dealtCards[0]}
+						setDealersScore={setDealersScore}
+					/>
 				</div>
-				{/* DEALERS CARDS */}
-				{
-					<ul className={styles.hand}>
-						{
-							isPlayersTurn ?
-								<Card
-									suit={dealer.cards[0].suit}
-									rank={dealer.cards[0].rank}
-								/>
 
-								: dealer.cards.map((card, index) => {
-									return (
-										<li key={index}>
-											<Card
-												rank={card.rank}
-												suit={card.suit}
-											/>
-										</li>
-									)
-								})
-						}
-					</ul>
-				}
+				{/* PLAYERS HAND */}
+				<div className='players_hand'>
+					<DisplayScore
+						isTurnOver={!isPlayersTurn}
+						scoreArray={playersScore}
+					/>
+					<p>Player's Hand</p>
+					<Hand
+						isPlayer={true}
+						isTurn={isPlayersTurn}
+						cards={dealtCards[1]}
+						setPlayersScore={setPlayersScore}
+					/>
+				</div >
+
 			</div>
-
-			{/* PLAYERS HAND */}
-			<div className='players_hand'>
-				{/* PLAYERS SCORE */}
-				<div className='hand_score'>
-					{
-						isBust ?
-							<div className="score_bust">
-								BUST: <span className={styles.color_red}>{hand.score[0]}</span>
-							</div>
-							: isBlackJack ?
-								<div className="score_blackjack">
-									Black Jack!: <span className={styles.color_green}>21</span>
-								</div>
-								: !isPlayersTurn ? // when player "Stands" we only want to show their highest score
-									<div className="score">
-										Score: {hand.score[1] < 22 ? hand.score[1] : hand.score[0]}
-									</div>
-									: // show both scores if they're different, else just show one score
-									<div className="score">
-										Score: {hand.score[0]} {(hand.score[0] !== hand.score[1] && hand.score[1] < 22) && ` / ${hand.score[1]}`}
-									</div>
-					}
-				</div>
-				{/* PLAYERS CARDS */}
-				{
-					<ul className={styles.hand}>
-						{
-							hand.cards.map((card, index) => {
-								return (
-									<li key={index}>
-										<Card
-											rank={card.rank}
-											suit={card.suit}
-										/>
-									</li>
-								)
-							})
-						}
-					</ul>
-				}
-			</div>
-
 			{/* PLAYER'S HAND CONTROLS */}
-			<button onClick={handleClick_hit} disabled={isBust || !isPlayersTurn}>Hit</button>
-			<button onClick={handleClick_stand} disabled={isBust || !isPlayersTurn}>Stand</button>
-		</>
+			< button onClick={handleClick_hit} disabled={!isPlayersTurn}> Hit</button >
+			<button onClick={handleClick_stand} disabled={!isPlayersTurn}>Stand</button>
+		</div>
 	)
-
 }

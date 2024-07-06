@@ -1,0 +1,16 @@
+.Hand {
+
+	.score {
+		color: pink
+	}
+
+	.cards {
+		display: flex;
+
+		padding: 0;
+
+		li {
+			list-style: none;
+		}
+	}
+}

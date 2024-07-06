@@ -11,4 +11,8 @@
 	border-radius: 5px;
 
 	list-style: none;
+
+	.rank {
+		font-size: 2rem;
+	}
 }

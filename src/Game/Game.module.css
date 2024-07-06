@@ -1,9 +1,15 @@
-.color_red {
-	color: red;
-}
+.Game {
+	display: flex;
+	flex-direction: column;
+	gap: 2rem;
 
-.color_green {
-	color: green;
+	.table {
+		display: flex;
+		flex-direction: column;
+		gap: 3rem;
+		justify-content: center;
+		background-color: green;
+	}
 }
 
 ul.hand {
