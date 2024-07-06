@@ -45,7 +45,7 @@ export function Hand({ cards, isPlayer, isTurn, setDealersScore, setPlayersScore
 			{/* CARDS */}
 			<ul className={styles.cards}>
 				{
-					// render nothing when 'cards' is undefined (cards haven't been dealt yet)
+					// render nothing when 'cards' is undefined (i.e. cards haven't been dealt yet)
 					cards === undefined ? <><li></li><li></li></>
 						: cards.map((card, index) => {
 							return (
