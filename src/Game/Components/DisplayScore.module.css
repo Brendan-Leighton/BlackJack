@@ -1,9 +1,12 @@
-.DisplayScore {}
+.DisplayScore {
+	font-size: 1.5rem;
+	font-weight: bold;
 
-.color_red {
-	color: red;
-}
+	.bust {
+		color: var(--color-text-bust);
+	}
 
-.color_green {
-	color: green;
+	.blackjack {
+		color: var(--color-text-blackjack);
+	}
 }

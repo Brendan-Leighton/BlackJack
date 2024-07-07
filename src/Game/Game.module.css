@@ -3,12 +3,37 @@
 	flex-direction: column;
 	gap: 2rem;
 
+	max-width: 90%;
+
+	padding: 1rem;
+
+	background-color: var(--color-game-background);
+
+	.game_message {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		height: 240px;
+		font-size: 2rem;
+	}
+
 	.table {
 		display: flex;
 		flex-direction: column;
 		gap: 3rem;
 		justify-content: center;
-		background-color: green;
+		background-color: var(--color-table-background);
+		border-radius: var(--border-radius);
+	}
+
+	.player_hand_controls {
+		display: flex;
+		justify-content: space-evenly;
+
+		button {
+			width: 100px;
+			height: 50px;
+		}
 	}
 }
 

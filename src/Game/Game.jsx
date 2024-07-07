@@ -5,7 +5,7 @@ import { DisplayScore, Hand } from './Components'
 
 export default function Game() {
 	// DEV ONLY
-	const tempCards = [new iCard('S', 'A'), new iCard('C', 'A')];
+	const tempCards = [new iCard('S', 'A'), new iCard('C', 'A'), new iCard('S', 'A'), new iCard('C', 'A'), new iCard('S', 'A'), new iCard('C', 'A'), new iCard('S', 'A'), new iCard('C', 'A')];
 
 	//
 	const [deck, setDeck] = useState()
@@ -98,9 +98,9 @@ export default function Game() {
 	 * Deal 2 cards to player and dealer
 	 */
 	function handleClick_deal() {
-
-		// setDealtCards([[...deck.draw(2)], [...deck.draw(2)]])
-		setDealtCards([[...deck.draw(2)], tempCards])
+		setDeck(new Deck)
+		setDealtCards([[...deck.draw(2)], [...deck.draw(2)]])
+		// setDealtCards([[...deck.draw(2)], tempCards])
 		// RESET STATE
 		setIsGameOver(false)
 		setIsGameTie(false)
@@ -125,10 +125,14 @@ export default function Game() {
 
 	return (
 		<div className={styles.Game}>
-			{/* GAME STATE MESSAGES */}
-			{isGameOver && <p>GAME OVER!</p>}
-			{isGameTie && <p>It's a Tie!</p>}
-			{isGameOver && (isWinnerPlayer ? <p>Player Wins</p> : <p>Dealer Wins</p>)}
+
+			<div className={styles.game_message}>
+				{/* GAME STATE MESSAGES */}
+				{!dealtCards[0].length && <p>Click 'Deal' to start playing!</p>}
+				{/* {isGameOver && <p>GAME OVER!</p>} */}
+				{isGameTie && <p>It's a Tie!</p>}
+				{isGameOver && ((!isGameTie && isWinnerPlayer) ? <p>Player Wins</p> : <p>Dealer Wins</p>)}
+			</div>
 
 			{/* MAIN CONTROLS */}
 			<button onClick={handleClick_deal}>Deal</button>
@@ -136,7 +140,7 @@ export default function Game() {
 			<div className={styles.table}>
 				{/* DEALERS HAND */}
 				<div className='dealers_hand'>
-					<p>Dealer's Hand</p>
+					<p>Dealer</p>
 					<DisplayScore
 						scoreArray={dealersScore}
 					/>
@@ -150,11 +154,11 @@ export default function Game() {
 
 				{/* PLAYERS HAND */}
 				<div className='players_hand'>
+					<p>You</p>
 					<DisplayScore
 						isTurnOver={!isPlayersTurn}
 						scoreArray={playersScore}
 					/>
-					<p>Player's Hand</p>
 					<Hand
 						isPlayer={true}
 						isTurn={isPlayersTurn}
@@ -162,11 +166,13 @@ export default function Game() {
 						setPlayersScore={setPlayersScore}
 					/>
 				</div >
-
 			</div>
-			{/* PLAYER'S HAND CONTROLS */}
-			< button onClick={handleClick_hit} disabled={!isPlayersTurn}> Hit</button >
-			<button onClick={handleClick_stand} disabled={!isPlayersTurn}>Stand</button>
+
+			<div className={styles.player_hand_controls}>
+				{/* PLAYER'S HAND CONTROLS */}
+				< button onClick={handleClick_hit} disabled={!isPlayersTurn || !dealtCards[0].length}> Hit</button >
+				<button onClick={handleClick_stand} disabled={!isPlayersTurn || !dealtCards[0].length}>Stand</button>
+			</div>
 		</div>
 	)
 }
