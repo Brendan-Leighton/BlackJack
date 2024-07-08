@@ -5,7 +5,10 @@ import { DisplayScore, Hand } from './Components'
 
 export default function Game() {
 	// DEV ONLY
-	const tempCards = [new iCard('S', 'A'), new iCard('C', 'A'), new iCard('S', 'A'), new iCard('C', 'A'), new iCard('S', 'A'), new iCard('C', 'A'), new iCard('S', 'A'), new iCard('C', 'A')];
+	// test cards can be applied in the 'handleClick_deal()' function,
+	// uncomment the line between the comments // TESTING ONLY - ***
+	const testCards_Player = [new iCard('S', 'J'), new iCard('C', '7')];
+	const testCards_Dealer = [new iCard('S', 'J'), new iCard('C', '7')];
 
 	//
 	const [deck, setDeck] = useState()
@@ -46,17 +49,26 @@ export default function Game() {
 	}, [isPlayersTurn, dealersScore])
 
 	function checkDealersHand() {
+		console.log(`\ncheckDealersHand():`);
+
+		const dealersUpdatedScore = [0, 0]
+		dealtCards[0].forEach(card => {
+			dealersUpdatedScore[0] += card.score[0]
+			dealersUpdatedScore[1] += card.score[1]
+		})
+
+		console.log(`\tScores: ${dealersUpdatedScore}`);
 
 		// BUST
-		if (dealersScore[0] > 21) {
-			console.log(`\tDealer Bust on ${dealersScore[0]}`);
+		if (dealersUpdatedScore[0] > 21) {
+			console.log(`\tDealer Bust on ${dealersUpdatedScore[0]}`);
 			setIsGameOver(true)
 			setIsWinnerPlayer(true)
 			return
 		}
 
 		// BLACK JACK
-		if (dealersScore[0] === 21 || dealersScore[1] === 21) {
+		if (dealersUpdatedScore[0] === 21 || dealersUpdatedScore[1] === 21) {
 			setIsGameOver(true)
 			if (playersScore[0] === 21 || playersScore[1] === 21) {
 				setIsGameTie(true)
@@ -67,19 +79,22 @@ export default function Game() {
 		}
 
 		// STAND - end dealers turn and determine the winner
-		if (dealersScore[0] >= 17) {
+		if (dealersUpdatedScore[0] >= 17) {  // only checking dealer's score 0 so the dealer will try for a higher score if they have an ace buffer
 			setIsGameOver(true)
-			console.log(`\tDealer stops at ${dealersScore[0]}`);
-			if ((playersScore[0] > dealersScore[0] && playersScore[0] <= 21) || (playersScore[1] > dealersScore[0] && playersScore[1] <= 21)) {
+			console.log(`\tDealer stops at ${dealersUpdatedScore[0]}`);
+			// is either of player's score beating the dealers without busting?
+			if ((playersScore[0] > dealersUpdatedScore[0] && playersScore[0] <= 21) || (playersScore[1] > dealersUpdatedScore[0] && playersScore[1] <= 21)) {
 				let bestHand
-				if (playersScore[1] > 21) bestHand = playersScore[0]
-				else bestHand = Math.max(playersScore[0], playersScore[1])
+				if (playersScore[1] > 21) bestHand = playersScore[0] // score 0 is best hand when score 1 busts
+				else bestHand = playersScore[1] // else score 1 is the highest
 				setIsWinnerPlayer(true)
 				console.log(`Player wins with ${bestHand}`);
 			}
-			else if (playersScore[0] === dealersScore[0] || playersScore[0] === dealersScore[0]) {
+			// is their a tie?
+			else if (playersScore[0] === dealersUpdatedScore[0] || playersScore[1] === dealersUpdatedScore[0]) {
 				setIsGameTie(true)
 			}
+			// else dealer wins
 			else {
 				setIsWinnerPlayer(false)
 				console.log(`Dealer Wins`);
@@ -88,9 +103,14 @@ export default function Game() {
 		}
 
 		// HIT
-		if (dealersScore[0] < 17) {
+		if (dealersUpdatedScore[0] < 17) {
 			console.log(`\tDealer Hits`);
-			setDealtCards([[...dealtCards[0], ...deck.draw(1)], dealtCards[1]])
+			setDealtCards(
+				[
+					[...dealtCards[0], ...deck.draw(1)], // dealer's cards
+					dealtCards[1]												 // player's cards
+				]
+			)
 		}
 	}
 
@@ -99,8 +119,12 @@ export default function Game() {
 	 */
 	function handleClick_deal() {
 		setDeck(new Deck)
-		setDealtCards([[...deck.draw(2)], [...deck.draw(2)]])
-		// setDealtCards([[...deck.draw(2)], tempCards])
+		// setDealtCards([[...deck.draw(2)], [...deck.draw(2)]])
+
+		// TESTING ONLY - below
+		setDealtCards([testCards_Dealer, testCards_Player])
+		// TESTING ONLY - above
+
 		// RESET STATE
 		setIsGameOver(false)
 		setIsGameTie(false)
@@ -131,7 +155,7 @@ export default function Game() {
 				{!dealtCards[0].length && <p>Click 'Deal' to start playing!</p>}
 				{/* {isGameOver && <p>GAME OVER!</p>} */}
 				{isGameTie && <p>It's a Tie!</p>}
-				{isGameOver && ((!isGameTie && isWinnerPlayer) ? <p>Player Wins</p> : <p>Dealer Wins</p>)}
+				{(isGameOver && !isGameTie) && isWinnerPlayer ? <p>Player Wins</p> : <p>Dealer Wins</p>}
 			</div>
 
 			{/* MAIN CONTROLS */}
