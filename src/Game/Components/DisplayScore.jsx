@@ -33,11 +33,11 @@ export function DisplayScore({ scoreArray, isTurnOver }) {
 			{
 				isBust ?
 					<div className={styles.bust}>
-						BUST: <span className={styles.bust_score}>{scoreArray[0]}</span>
+						<span className={styles.bust_score}>{scoreArray[0]}</span> BUST
 					</div>
 					: isBlackJack ?
 						<div className={styles.blackjack}>
-							Black Jack!: <span className={styles.blackjack_score}>21</span>
+							<span className={styles.blackjack_score}>21</span> Black Jack!
 						</div>
 						: isTurnOver ? // when player "Stands" we only want to show their highest score
 							<div className="score">

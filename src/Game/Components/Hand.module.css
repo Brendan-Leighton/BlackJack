@@ -1,5 +1,7 @@
 .Hand {
 
+	min-height: 106px;
+
 	.cards {
 		display: flex;
 		justify-content: center;
