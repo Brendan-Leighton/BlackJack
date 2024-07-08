@@ -1,7 +1,7 @@
 .Game {
 	display: flex;
 	flex-direction: column;
-	gap: 2rem;
+	gap: 1rem;
 
 	max-width: 90%;
 
@@ -13,8 +13,8 @@
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
-		height: 240px;
-		font-size: 2rem;
+		height: 50px;
+		font-size: 1rem;
 	}
 
 	.table {

@@ -16,7 +16,7 @@ export default function Game() {
 	const [playersScore, setPlayersScore] = useState([0, 0])
 	const [dealtCards, setDealtCards] = useState([[], []])
 	const [isPlayersTurn, setIsPlayersTurn] = useState(true)
-	const [isGameOver, setIsGameOver] = useState(false)
+	const [isGameOver, setIsGameOver] = useState(true)
 	const [isWinnerPlayer, setIsWinnerPlayer] = useState(false)
 	const [isGameTie, setIsGameTie] = useState(false)
 
@@ -34,12 +34,22 @@ export default function Game() {
 			setIsPlayersTurn(false)
 			setIsGameOver(true)
 			setIsWinnerPlayer(false)
+			setDealersScore(getDealersScore())
 		}
 
 		if (playersScore[0] === 21 || playersScore[1] === 21) {
 			setIsPlayersTurn(false)
 		}
 	}, [playersScore])
+
+	function getDealersScore() {
+		const dealersUpdatedScore = [0, 0]
+		dealtCards[0].forEach(card => {
+			dealersUpdatedScore[0] += card.score[0]
+			dealersUpdatedScore[1] += card.score[1]
+		})
+		return dealersUpdatedScore
+	}
 
 	/**
 		Dealer's Turn handled here
@@ -51,11 +61,9 @@ export default function Game() {
 	function checkDealersHand() {
 		console.log(`\ncheckDealersHand():`);
 
-		const dealersUpdatedScore = [0, 0]
-		dealtCards[0].forEach(card => {
-			dealersUpdatedScore[0] += card.score[0]
-			dealersUpdatedScore[1] += card.score[1]
-		})
+		const dealersUpdatedScore = getDealersScore()
+
+		setDealersScore(dealersUpdatedScore)
 
 		console.log(`\tScores: ${dealersUpdatedScore}`);
 
@@ -119,10 +127,10 @@ export default function Game() {
 	 */
 	function handleClick_deal() {
 		setDeck(new Deck)
-		// setDealtCards([[...deck.draw(2)], [...deck.draw(2)]])
+		setDealtCards([[...deck.draw(2)], [...deck.draw(2)]])
 
 		// TESTING ONLY - below
-		setDealtCards([testCards_Dealer, testCards_Player])
+		// setDealtCards([testCards_Dealer, testCards_Player])
 		// TESTING ONLY - above
 
 		// RESET STATE
@@ -147,24 +155,23 @@ export default function Game() {
 		setIsPlayersTurn(false)
 	}
 
+	function gameOverMessage() {
+
+		// if (!dealtCards[0].length) return "Click 'Deal' to start playing!"
+		if (!isGameOver) return "Press 'Hit' for another card or 'Stand' to finish your turn"
+		if (isGameTie) return "It's a Tie!"
+		if (isGameOver && isWinnerPlayer) return "Player Wins"
+		else return "Dealer Wins"
+
+	}
+
 	return (
 		<div className={styles.Game}>
-
-			<div className={styles.game_message}>
-				{/* GAME STATE MESSAGES */}
-				{!dealtCards[0].length && <p>Click 'Deal' to start playing!</p>}
-				{/* {isGameOver && <p>GAME OVER!</p>} */}
-				{isGameTie && <p>It's a Tie!</p>}
-				{(isGameOver && !isGameTie) && isWinnerPlayer ? <p>Player Wins</p> : <p>Dealer Wins</p>}
-			</div>
-
-			{/* MAIN CONTROLS */}
-			<button onClick={handleClick_deal}>Deal</button>
 
 			<div className={styles.table}>
 				{/* DEALERS HAND */}
 				<div className='dealers_hand'>
-					<p>Dealer</p>
+					{/* <p>Dealer</p> */}
 					<DisplayScore
 						scoreArray={dealersScore}
 					/>
@@ -176,9 +183,16 @@ export default function Game() {
 					/>
 				</div>
 
+				<div className={styles.game_message}>
+					{/* GAME STATE MESSAGES */}
+					<p>
+						{gameOverMessage()}
+					</p>
+				</div>
+
 				{/* PLAYERS HAND */}
 				<div className='players_hand'>
-					<p>You</p>
+					{/* <p>You</p> */}
 					<DisplayScore
 						isTurnOver={!isPlayersTurn}
 						scoreArray={playersScore}
@@ -192,8 +206,10 @@ export default function Game() {
 				</div >
 			</div>
 
+			{/* MAIN CONTROLS */}
+			<button onClick={handleClick_deal} disabled={!isGameOver}>Deal</button>
+			{/* PLAYER'S HAND CONTROLS */}
 			<div className={styles.player_hand_controls}>
-				{/* PLAYER'S HAND CONTROLS */}
 				< button onClick={handleClick_hit} disabled={!isPlayersTurn || !dealtCards[0].length}> Hit</button >
 				<button onClick={handleClick_stand} disabled={!isPlayersTurn || !dealtCards[0].length}>Stand</button>
 			</div>
